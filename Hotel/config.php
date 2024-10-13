@@ -11,5 +11,5 @@ $conn = mysqli_connect($server, $username, $password, $database, $port);
 if (!$conn) {
     die("<script>alert('Connection Failed: ' . mysqli_connect_error());</script>");
 } else {
-    echo "<script>alert('Connection Successful.')</script>";
+    //echo "<script>alert('Connection Successful.')</script>";
 }
