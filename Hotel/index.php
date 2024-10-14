@@ -121,9 +121,17 @@ session_start();
                         });</script>";
                     } else {
                         // Proceed with login if reCAPTCHA verification was successful
-                        $sql = "SELECT * FROM signup WHERE Email = '$Email' AND Password = BINARY '$Password'";
-                        $result = mysqli_query($conn, $sql);
-            
+                        $stmt = $conn->prepare("SELECT * FROM signup WHERE Email = ? AND Password = BINARY ?");
+                    
+                        // Bind parameters (s for string, s for the password)
+                        $stmt->bind_param("ss", $Email, $Password);
+                    
+                        // Execute the statement
+                        $stmt->execute();
+                    
+                        // Get the result
+                        $result = $stmt->get_result();
+                    
                         if ($result->num_rows > 0) {
                             $_SESSION['usermail'] = $Email;
                             $_SESSION['login_attempts'] = 0; // Reset the login attempts on successful login
@@ -134,7 +142,7 @@ session_start();
                         } else {
                             $_SESSION['login_attempts'] += 1; // Increment the login attempts counter
                             writeLog("Failed login attempt for email: $Email. Email or Password error.");
-            
+                    
                             if ($_SESSION['login_attempts'] >= $maxAttempts) {
                                 $_SESSION['login_block_time'] = time() + $blockDuration; // Set block time
                                 echo "<script>swal({
@@ -148,7 +156,11 @@ session_start();
                                 });</script>";
                             }
                         }
+                    
+                        // Close the statement
+                        $stmt->close();
                     }
+                    
                 }
             }
             ?>
@@ -196,23 +208,36 @@ session_start();
                         icon: 'error',
                     });</script>";
                 }
-                else{
-                        $sql = "SELECT * FROM emp_login WHERE Emp_Email = '$Email' AND Emp_Password = BINARY'$Password'";
-                        $result = mysqli_query($conn, $sql);
-
-                        if ($result->num_rows > 0) {
-                            $_SESSION['usermail']=$Email;
-                            $Email = "";
-                            $Password = "";
-                            header("Location: admin/admin.php");
-                        } else {
-                            echo "<script>swal({
-                                title: 'Something went wrong',
-                                icon: 'error',
-                            });
-                            </script>";
-                        }
-                        }
+                else {
+                    // Prepare the SQL statement
+                    $stmt = $conn->prepare("SELECT * FROM emp_login WHERE Emp_Email = ? AND Emp_Password = BINARY ?");
+                
+                    // Bind parameters (s for string, s for the password)
+                    $stmt->bind_param("ss", $Email, $Password);
+                
+                    // Execute the statement
+                    $stmt->execute();
+                
+                    // Get the result
+                    $result = $stmt->get_result();
+                
+                    if ($result->num_rows > 0) {
+                        $_SESSION['usermail'] = $Email;
+                        $Email = "";
+                        $Password = "";
+                        header("Location: admin/admin.php");
+                    } else {
+                        echo "<script>swal({
+                            title: 'Something went wrong',
+                            icon: 'error',
+                        });
+                        </script>";
+                    }
+                
+                    // Close the statement
+                    $stmt->close();
+                }
+                
                     }
                 ?> 
                 <form class="employee_login authsection" id="employeelogin" action="" method="POST">

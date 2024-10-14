@@ -1,1 +1,5 @@
 [2024-10-13 12:50:32] Successful login attempt for email: 
+[2024-10-14 12:47:05] Successful login attempt for email: 
+[2024-10-14 12:47:19] Failed login attempt for email: chamuditha05@gmail.com. Email or Password error.
+[2024-10-14 12:48:03] Failed login attempt for email: ' OR '1'='1. Email or Password error.
+[2024-10-14 12:48:49] Successful login attempt for email: 
