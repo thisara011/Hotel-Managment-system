@@ -67,103 +67,109 @@ session_start();
                 </div>
 
                 <!-- // ==userlogin== -->
-            <?php
-
-            require_once 'C:/xampp/php/vendor/autoload.php';
+                <?php
 
 
-            // Load .env file
-            $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-            $dotenv->load();
+// Start the session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-            // Access the reCAPTCHA keys
-            $recaptchaSiteKey = $_ENV['RECAPTCHA_SITE_KEY'];
-            $recaptchaSecretKey = $_ENV['RECAPTCHA_SECRET_KEY'];
-            // Initialize login attempt variables if not already set
-            if (!isset($_SESSION['login_attempts'])) {
-                $_SESSION['login_attempts'] = 0;
-            }
-            if (!isset($_SESSION['login_block_time'])) {
-                $_SESSION['login_block_time'] = 0;
-            }
 
-            // Set the maximum login attempts and block duration
-            $maxAttempts = 3;
-            $blockDuration = 300; // Block duration in seconds (5 minutes)
 
-            if (isset($_POST['user_login_submit'])) {
-                // Check if the user is currently blocked
-                if (time() < $_SESSION['login_block_time']) {
-                    $remainingBlockTime = $_SESSION['login_block_time'] - time();
-                    echo "<script>swal({
-                        title: 'Too many failed login attempts. Please try again after " . ceil($remainingBlockTime / 60) . " minutes.',
-                        icon: 'error',
-                    });</script>";
+// Initialize login attempt variables if not already set
+if (!isset($_SESSION['login_attempts'])) {
+    $_SESSION['login_attempts'] = 0;
+}
+if (!isset($_SESSION['login_block_time'])) {
+    $_SESSION['login_block_time'] = 0;
+}
+
+// Set the maximum login attempts and block duration
+$maxAttempts = 3;
+$blockDuration = 300; // Block duration in seconds (5 minutes)
+
+if (isset($_POST['user_login_submit'])) {
+    // Check if the user is currently blocked
+    if (time() < $_SESSION['login_block_time']) {
+        $remainingBlockTime = $_SESSION['login_block_time'] - time();
+        echo "<script>swal({
+            title: 'Too many failed login attempts. Please try again after " . ceil($remainingBlockTime / 60) . " minutes.',
+            icon: 'error',
+        });</script>";
+    } else {
+        // Reset login attempts after the block period has passed
+        $_SESSION['login_attempts'] = 0;
+
+        // Sanitize user input
+        $Email = filter_var($_POST['Email'], FILTER_SANITIZE_EMAIL);
+        $Password = $_POST['Password'];
+
+        // Verify reCAPTCHA
+        if (isset($_POST['g-recaptcha-response'])) {
+            $recaptchaSecretKey = '6Lec-icqAAAAAPSJuF7JScv6FC8MVybGowxB2w_h'; // Replace with your actual secret key
+            $recaptchaResponse = $_POST['g-recaptcha-response'];
+            $remoteIp = $_SERVER['REMOTE_ADDR'];
+            $recaptchaVerifyUrl = "https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecretKey&response=$recaptchaResponse&remoteip=$remoteIp";
+
+            $response = file_get_contents($recaptchaVerifyUrl);
+            $responseKeys = json_decode($response, true);
+
+            if (intval($responseKeys["success"]) !== 1) {
+                echo "<script>swal({
+                    title: 'reCAPTCHA verification failed',
+                    icon: 'error',
+                });</script>";
+            } else {
+                // Proceed with login if reCAPTCHA verification was successful
+                $stmt = $conn->prepare("SELECT * FROM signup WHERE Email = ? AND Password = BINARY ?");
+                
+                // Bind parameters (s for string, s for the password)
+                $stmt->bind_param("ss", $Email, $Password);
+                
+                // Execute the statement
+                $stmt->execute();
+                
+                // Get the result
+                $result = $stmt->get_result();
+                
+                if ($result->num_rows > 0) {
+                    // Successful login
+                    $_SESSION['usermail'] = $Email;
+                    $_SESSION['login_attempts'] = 0; // Reset the login attempts on successful login
+                    $_SESSION['login_block_time'] = 0; // Clear any block time
+                    header("Location: home.php");
+                    exit(); // Ensure no further code execution
                 } else {
-                    // Reset login attempts after the block period has passed
-                    $_SESSION['login_attempts'] = 0;
-            
-                    $Email = $_POST['Email'];
-                    $Password = $_POST['Password'];
-            
-                    // Verify reCAPTCHA
-                    $recaptchaSecret = $recaptchaSecretKey; // Replace with your actual secret key
-                    $recaptchaResponse = $_POST['g-recaptcha-response'];
-                    $remoteIp = $_SERVER['REMOTE_ADDR'];
-            
-                    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse&remoteip=$remoteIp");
-                    $responseKeys = json_decode($response, true);
-            
-                    if (intval($responseKeys["success"]) !== 1) {
+                    // Failed login attempt
+                    $_SESSION['login_attempts'] += 1; // Increment the login attempts counter
+                    if ($_SESSION['login_attempts'] >= $maxAttempts) {
+                        $_SESSION['login_block_time'] = time() + $blockDuration; // Set block time
                         echo "<script>swal({
-                            title: 'reCAPTCHA verification failed',
+                            title: 'Too many failed login attempts. You are blocked for 5 minutes.',
                             icon: 'error',
                         });</script>";
                     } else {
-                        // Proceed with login if reCAPTCHA verification was successful
-                        $stmt = $conn->prepare("SELECT * FROM signup WHERE Email = ? AND Password = BINARY ?");
-                    
-                        // Bind parameters (s for string, s for the password)
-                        $stmt->bind_param("ss", $Email, $Password);
-                    
-                        // Execute the statement
-                        $stmt->execute();
-                    
-                        // Get the result
-                        $result = $stmt->get_result();
-                    
-                        if ($result->num_rows > 0) {
-                            $_SESSION['usermail'] = $Email;
-                            $_SESSION['login_attempts'] = 0; // Reset the login attempts on successful login
-                            $Email = "";
-                            $Password = "";
-                            header("Location: home.php");
-                            writeLog("Successful login attempt for email: $Email");
-                        } else {
-                            $_SESSION['login_attempts'] += 1; // Increment the login attempts counter
-                            writeLog("Failed login attempt for email: $Email. Email or Password error.");
-                    
-                            if ($_SESSION['login_attempts'] >= $maxAttempts) {
-                                $_SESSION['login_block_time'] = time() + $blockDuration; // Set block time
-                                echo "<script>swal({
-                                    title: 'Too many failed login attempts. You are blocked for 5 minutes.',
-                                    icon: 'error',
-                                });</script>";
-                            } else {
-                                echo "<script>swal({
-                                    title: 'Invalid email or password',
-                                    icon: 'error',
-                                });</script>";
-                            }
-                        }
-                    
-                        // Close the statement
-                        $stmt->close();
+                        echo "<script>swal({
+                            title: 'Invalid email or password',
+                            icon: 'error',
+                        });</script>";
                     }
-                    
                 }
+                
+                // Close the statement
+                $stmt->close();
             }
-            ?>
+        } else {
+            echo "<script>swal({
+                title: 'Please complete the reCAPTCHA',
+                icon: 'error',
+            });</script>";
+        }
+    }
+}
+?>
+
 
 
                 <form class="user_login authsection active" id="userlogin" action="" method="POST">
@@ -179,7 +185,7 @@ session_start();
                         <input type="password" class="form-control" name="Password" placeholder=" ">
                         <label for="Password">Password</label>
                     </div>
-                    <div class="g-recaptcha" data-sitekey="<?php echo $recaptchaSiteKey; ?>"></div>
+                    <div class="g-recaptcha" data-sitekey="6Lec-icqAAAAABjlGZEmL380JCubm3oR9Fx3-hsS"></div>
 
                     <button type="submit" name="user_login_submit" class="auth_btn">Log in</button>
 
