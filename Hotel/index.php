@@ -1,7 +1,10 @@
 <?php
-
+// In another PHP file
+include 'logger.php'; 
 include 'config.php';
 session_start();
+
+
 
 ?>
 <!DOCTYPE html>
@@ -64,40 +67,100 @@ session_start();
                 </div>
 
                 <!-- // ==userlogin== -->
-                            <?php
+            <?php
+
+            require_once 'C:/xampp/php/vendor/autoload.php';
+
+
+            // Load .env file
+            $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+            $dotenv->load();
+
+            // Access the reCAPTCHA keys
+            $recaptchaSiteKey = $_ENV['RECAPTCHA_SITE_KEY'];
+            $recaptchaSecretKey = $_ENV['RECAPTCHA_SECRET_KEY'];
+            // Initialize login attempt variables if not already set
+            if (!isset($_SESSION['login_attempts'])) {
+                $_SESSION['login_attempts'] = 0;
+            }
+            if (!isset($_SESSION['login_block_time'])) {
+                $_SESSION['login_block_time'] = 0;
+            }
+
+            // Set the maximum login attempts and block duration
+            $maxAttempts = 3;
+            $blockDuration = 300; // Block duration in seconds (5 minutes)
+
             if (isset($_POST['user_login_submit'])) {
-                $Email = $_POST['Email'];
-                $Password = $_POST['Password'];
-
-                // Verify reCAPTCHA
-                $recaptchaSecret = '6Lec-icqAAAAAPSJuF7JScv6FC8MVybGowxB2w_h'; // Replace with your actual secret key
-                $recaptchaResponse = $_POST['g-recaptcha-response'];
-                $remoteIp = $_SERVER['REMOTE_ADDR'];
-
-                $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse&remoteip=$remoteIp");
-                $responseKeys = json_decode($response, true);
-
-                if (intval($responseKeys["success"]) !== 1) {
+                // Check if the user is currently blocked
+                if (time() < $_SESSION['login_block_time']) {
+                    $remainingBlockTime = $_SESSION['login_block_time'] - time();
                     echo "<script>swal({
-                        title: 'reCAPTCHA verification failed',
+                        title: 'Too many failed login attempts. Please try again after " . ceil($remainingBlockTime / 60) . " minutes.',
                         icon: 'error',
                     });</script>";
                 } else {
-                    // Proceed with login if reCAPTCHA verification was successful
-                    $sql = "SELECT * FROM signup WHERE Email = '$Email' AND Password = BINARY '$Password'";
-                    $result = mysqli_query($conn, $sql);
-
-                    if ($result->num_rows > 0) {
-                        $_SESSION['usermail'] = $Email;
-                        $Email = "";
-                        $Password = "";
-                        header("Location: home.php");
-                    } else {
+                    // Reset login attempts after the block period has passed
+                    $_SESSION['login_attempts'] = 0;
+            
+                    $Email = $_POST['Email'];
+                    $Password = $_POST['Password'];
+            
+                    // Verify reCAPTCHA
+                    $recaptchaSecret = $recaptchaSecretKey; // Replace with your actual secret key
+                    $recaptchaResponse = $_POST['g-recaptcha-response'];
+                    $remoteIp = $_SERVER['REMOTE_ADDR'];
+            
+                    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse&remoteip=$remoteIp");
+                    $responseKeys = json_decode($response, true);
+            
+                    if (intval($responseKeys["success"]) !== 1) {
                         echo "<script>swal({
-                            title: 'Invalid email or password',
+                            title: 'reCAPTCHA verification failed',
                             icon: 'error',
                         });</script>";
+                    } else {
+                        // Proceed with login if reCAPTCHA verification was successful
+                        $stmt = $conn->prepare("SELECT * FROM signup WHERE Email = ? AND Password = BINARY ?");
+                    
+                        // Bind parameters (s for string, s for the password)
+                        $stmt->bind_param("ss", $Email, $Password);
+                    
+                        // Execute the statement
+                        $stmt->execute();
+                    
+                        // Get the result
+                        $result = $stmt->get_result();
+                    
+                        if ($result->num_rows > 0) {
+                            $_SESSION['usermail'] = $Email;
+                            $_SESSION['login_attempts'] = 0; // Reset the login attempts on successful login
+                            $Email = "";
+                            $Password = "";
+                            header("Location: home.php");
+                            writeLog("Successful login attempt for email: $Email");
+                        } else {
+                            $_SESSION['login_attempts'] += 1; // Increment the login attempts counter
+                            writeLog("Failed login attempt for email: $Email. Email or Password error.");
+                    
+                            if ($_SESSION['login_attempts'] >= $maxAttempts) {
+                                $_SESSION['login_block_time'] = time() + $blockDuration; // Set block time
+                                echo "<script>swal({
+                                    title: 'Too many failed login attempts. You are blocked for 5 minutes.',
+                                    icon: 'error',
+                                });</script>";
+                            } else {
+                                echo "<script>swal({
+                                    title: 'Invalid email or password',
+                                    icon: 'error',
+                                });</script>";
+                            }
+                        }
+                    
+                        // Close the statement
+                        $stmt->close();
                     }
+                    
                 }
             }
             ?>
@@ -116,7 +179,8 @@ session_start();
                         <input type="password" class="form-control" name="Password" placeholder=" ">
                         <label for="Password">Password</label>
                     </div>
-                    <div class="g-recaptcha" data-sitekey="6Lec-icqAAAAABjlGZEmL380JCubm3oR9Fx3-hsS"></div>
+                    <div class="g-recaptcha" data-sitekey="<?php echo $recaptchaSiteKey; ?>"></div>
+
                     <button type="submit" name="user_login_submit" class="auth_btn">Log in</button>
 
                     <div class="footer_line">
@@ -144,23 +208,36 @@ session_start();
                         icon: 'error',
                     });</script>";
                 }
-                else{
-                        $sql = "SELECT * FROM emp_login WHERE Emp_Email = '$Email' AND Emp_Password = BINARY'$Password'";
-                        $result = mysqli_query($conn, $sql);
-
-                        if ($result->num_rows > 0) {
-                            $_SESSION['usermail']=$Email;
-                            $Email = "";
-                            $Password = "";
-                            header("Location: admin/admin.php");
-                        } else {
-                            echo "<script>swal({
-                                title: 'Something went wrong',
-                                icon: 'error',
-                            });
-                            </script>";
-                        }
-                        }
+                else {
+                    // Prepare the SQL statement
+                    $stmt = $conn->prepare("SELECT * FROM emp_login WHERE Emp_Email = ? AND Emp_Password = BINARY ?");
+                
+                    // Bind parameters (s for string, s for the password)
+                    $stmt->bind_param("ss", $Email, $Password);
+                
+                    // Execute the statement
+                    $stmt->execute();
+                
+                    // Get the result
+                    $result = $stmt->get_result();
+                
+                    if ($result->num_rows > 0) {
+                        $_SESSION['usermail'] = $Email;
+                        $Email = "";
+                        $Password = "";
+                        header("Location: admin/admin.php");
+                    } else {
+                        echo "<script>swal({
+                            title: 'Something went wrong',
+                            icon: 'error',
+                        });
+                        </script>";
+                    }
+                
+                    // Close the statement
+                    $stmt->close();
+                }
+                
                     }
                 ?> 
                 <form class="employee_login authsection" id="employeelogin" action="" method="POST">
@@ -180,8 +257,6 @@ session_start();
 
             <!--============ signup =============-->
             <?php
-include 'config.php';
-session_start();
 
 if (isset($_POST['user_signup_submit'])) {
     $Username = $_POST['Username'];
@@ -191,8 +266,10 @@ if (isset($_POST['user_signup_submit'])) {
     
     // Regular expressions for validation
     $usernamePattern = "/^[a-zA-Z0-9]{3,}$/"; // Only letters and numbers, min 3 characters
-    $emailPattern = "/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/"; // Standard email pattern
-    $passwordPattern = "/^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,}$/"; // Min 8 chars, 1 letter, 1 number
+    $emailPattern = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/";// Standard email pattern
+    $passwordPattern = "/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/";
+
+
     
     // reCAPTCHA verification
     $recaptchaSecret = '6Lec-icqAAAAAPSJuF7JScv6FC8MVybGowxB2w_h'; // Replace with your secret key
@@ -249,7 +326,7 @@ if (isset($_POST['user_signup_submit'])) {
                         $Email = "";
                         $Password = "";
                         $CPassword = "";
-                        header("Location: home.php");
+                        
                     } else {
                         echo "<script>swal({
                             title: 'Something went wrong',
@@ -311,3 +388,4 @@ if (isset($_POST['user_signup_submit'])) {
     AOS.init();
 </script>
 </html>
+
