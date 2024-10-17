@@ -2,9 +2,9 @@
 
 $server = "localhost";
 $username = "root";
-$password = ""; 
+$password = "mysql"; 
 $database = "bluebirdhotel";
-$port = 3306;  // The default MySQL port. Change if MySQL is running on a different port.
+$port = 3307;  // The default MySQL port. Change if MySQL is running on a different port.
 
 $conn = mysqli_connect($server, $username, $password, $database, $port);
 
