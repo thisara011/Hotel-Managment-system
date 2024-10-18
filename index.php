@@ -264,6 +264,7 @@ if (isset($_POST['user_login_submit'])) {
             </div>
 
  <!--============ signup =============-->
+ <!--============ signup =============-->
 <?php
 
 if (isset($_POST['user_signup_submit'])) {
@@ -271,20 +272,20 @@ if (isset($_POST['user_signup_submit'])) {
     $Email = $_POST['Email'];
     $Password = $_POST['Password'];
     $CPassword = $_POST['CPassword'];
-    
+
     // Regular expressions for validation
     $usernamePattern = "/^[a-zA-Z0-9]{3,}$/"; // Only letters and numbers, min 3 characters
-    $emailPattern = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/";// Standard email pattern
+    $emailPattern = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"; // Standard email pattern
     $passwordPattern = "/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/";
 
     // reCAPTCHA verification
     $recaptchaSecret = '6Lec-icqAAAAAPSJuF7JScv6FC8MVybGowxB2w_h'; // Replace with your secret key
     $recaptchaResponse = $_POST['g-recaptcha-response'];
     $remoteIp = $_SERVER['REMOTE_ADDR'];
-    
+
     $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse&remoteip=$remoteIp");
     $responseKeys = json_decode($response, true);
-    
+
     // Validate input fields
     if (intval($responseKeys["success"]) !== 1) {
         echo "<script>swal({
@@ -323,23 +324,37 @@ if (isset($_POST['user_signup_submit'])) {
                         icon: 'error',
                     });</script>";
                 } else {
-                    // Hash the password before inserting it
-                    $hashedPassword = password_hash($Password, PASSWORD_BCRYPT);
+                    // Check if Azure function is accessible before inserting
+                    if (triggerAzureFunction($Username, $Email)) {
+                        // Hash the password before inserting it
+                        $hashedPassword = password_hash($Password, PASSWORD_BCRYPT);
 
-                    // Insert the hashed password into the database
-                    $sql = "INSERT INTO signup (Username, Email, Password) VALUES ('$Username', '$Email', '$hashedPassword')";
-                    $result = mysqli_query($conn, $sql);
+                        // Insert the hashed password into the database
+                        $sql = "INSERT INTO signup (Username, Email, Password) VALUES ('$Username', '$Email', '$hashedPassword')";
+                        $result = mysqli_query($conn, $sql);
 
-                    if ($result) {
-                        $_SESSION['usermail'] = $Email;
-                        $Username = "";
-                        $Email = "";
-                        $Password = "";
-                        $CPassword = "";
-                        
+                        if ($result) {
+                            $_SESSION['usermail'] = $Email;
+
+                            // Reset form values
+                            $Username = "";
+                            $Email = "";
+                            $Password = "";
+                            $CPassword = "";
+
+                            echo "<script>swal({
+                                title: 'Signup successful! Confirmation email sent.',
+                                icon: 'success',
+                            });</script>";
+                        } else {
+                            echo "<script>swal({
+                                title: 'Something went wrong',
+                                icon: 'error',
+                            });</script>";
+                        }
                     } else {
                         echo "<script>swal({
-                            title: 'Something went wrong',
+                            title: 'Error triggering confirmation email function',
                             icon: 'error',
                         });</script>";
                     }
@@ -353,7 +368,35 @@ if (isset($_POST['user_signup_submit'])) {
         }
     }
 }
+
+// Function to send HTTP POST request to Azure Function
+function triggerAzureFunction($Username, $Email) {
+    $url = 'https://hmst.azurewebsites.net/api/emailconformation'; // Replace with your Azure Function URL
+    $data = array(
+        'name' => $Username,
+        'email' => $Email
+    );
+
+    $options = array(
+        'http' => array(
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data),
+        ),
+    );
+
+    $context  = stream_context_create($options);
+    $result = @file_get_contents($url, false, $context);
+
+    if ($result === FALSE) {
+        error_log('Error triggering Azure Function');
+        return false; // Return false if the API call fails
+    }
+    
+    return true; // Return true if the API call is successful
+}
 ?>
+
 
 
 
