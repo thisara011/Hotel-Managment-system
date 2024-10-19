@@ -346,14 +346,14 @@ if (isset($_POST['user_signup_submit'])) {
                             text: 'Your account has been created successfully.',
                             icon: 'success',
                         }).then(function() {
-                            window.location = 'logger.php'; // Redirect to login page after confirmation
+                            window.location = 'index.php'; // Redirect to login page after confirmation
                         });</script>";
                          echo "<script>swal({
                             title: 'Signup successful!',
                             text: 'Your account has been created successfully.',
                             icon: 'success',
                         }).then(function() {
-                            window.location = 'logger.php'; // Redirect to login page after confirmation
+                            window.location = 'index.php'; // Redirect to login page after confirmation
                         });</script>";
                         
                     } 
