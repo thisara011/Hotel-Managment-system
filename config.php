@@ -1,15 +1,24 @@
 <?php
+// Database connection parameters
+$host = 'localhost';
+$user = 'root'; //  database username
+$password = ''; //   database password
+$dbname = 'bluebirdhotel'; //  database name
 
-$server = "localhost";
-$username = "root";
-$password = ""; 
-$database = "bluebirdhotel";
-$port = 3306;  // The default MySQL port. Change if MySQL is running on a different port.
+try {
+    // Create a new mysqli connection
+    $conn = new mysqli($host, $user, $password, $dbname);
 
-$conn = mysqli_connect($server, $username, $password, $database, $port);
+    // Check for connection errors
+    if ($conn->connect_error) {
+        // Throw an exception if there is a connection error
+        throw new Exception('Connection failed: ' . $conn->connect_error);
+    }
 
-if (!$conn) {
-    die("<script>alert('Connection Failed: ' . mysqli_connect_error());</script>");
-} else {
-    //echo "<script>alert('Connection Successful.')</script>";
+    //echo "Connected successfully to the database.";
+
+} catch (Exception $e) {
+    // Handle the exception
+    echo "Error: " . $e->getMessage();
 }
+?>

@@ -1,79 +1,16 @@
 [2024-10-13 12:50:32] Successful login attempt for email: 
-[2024-10-14 12:47:05] Successful login attempt for email: 
 [2024-10-14 12:47:19] Failed login attempt for email: chamuditha05@gmail.com. Email or Password error.
 [2024-10-14 12:48:03] Failed login attempt for email: ' OR '1'='1. Email or Password error.
-[2024-10-14 12:48:49] Successful login attempt for email: 
-[2024-10-17 08:10:46] Invalid login attempt for email: chamuditha1@gmail.com
-[2024-10-17 08:11:33] Invalid login attempt for email: chamuditha1@gmail.com, $2y$10$tVfzstrIX2xbaNXodtIZLuR1AeXNos9nKxRSzYjD4CblusgQjDUrG
-[2024-10-17 08:24:58] Failed login attempt for email: chamuditha1@gmail.com. Invalid password.
-[2024-10-17 11:56:55] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 11:57:28] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 11:57:45] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 11:58:09] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 11:58:28] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 11:59:12] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 11:59:27] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 11:59:42] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 12:00:08] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 12:00:28] Failed login attempt for email: chamuditha05@gmail.com. Invalid password.
-[2024-10-17 20:16:54] Secret key: 2522264661f47d7ee679ced901a48980426cdb9fe9ccbcd2f4e2509f25a2bbf3
-[2024-10-17 20:44:09] User login attempt: chamuditha1@gmail.com
-[2024-10-17 20:45:18] User login attempt: chamuditha1@gmail.com
-[2024-10-17 20:46:18] User login attempt: chamuditha1@gmail.com
-[2024-10-17 20:46:18] decrypted text = 
-[2024-10-17 21:10:47] User login attempt: chamuditha1@gmail.com
-[2024-10-17 21:10:47] decrypted text = 
-[2024-10-17 21:22:22] reCAPTCHA verification failed for email: chamuditha1@gmail.com
-[2024-10-17 21:22:46] User login attempt: chamuditha1@gmail.com
-[2024-10-17 21:22:46] Encrypted password from DB for email chamuditha1@gmail.com: iiEXSSILboHzM8etOT6hTDo6S2d1NklxLzNTdC8vQXFDeGR6Z3
-[2024-10-17 21:22:46] IV: Š!I"nó3Ç­9>¡L, Encrypted Password: Kgu6Iq/3St//AqCxdzg
-[2024-10-17 21:22:46] Decryption failed.
-[2024-10-17 21:24:45] reCAPTCHA verification failed for email: chamuditha1@gmail.com
-[2024-10-17 21:25:06] User login attempt: chamuditha1@gmail.com
-[2024-10-17 21:25:06] Encrypted password from DB for email chamuditha1@gmail.com: iiEXSSILboHzM8etOT6hTDo6S2d1NklxLzNTdC8vQXFDeGR6Z3
-[2024-10-17 21:25:06] IV: Š!I"nó3Ç­9>¡L, Encrypted Password: Kgu6Iq/3St//AqCxdzg
-[2024-10-17 21:25:06] Decryption failed.
-[2024-10-17 21:33:18] reCAPTCHA verification failed for email: chamuditha1@gmail.com
-[2024-10-17 21:33:33] User login attempt: chamuditha1@gmail.com
-[2024-10-17 21:33:33] Encrypted password from DB for email chamuditha1@gmail.com: iiEXSSILboHzM8etOT6hTDo6S2d1NklxLzNTdC8vQXFDeGR6Z3
-[2024-10-17 21:33:33] Encrypted(decrypted) password: qtEmw3yfzMHaFJQRFADScjo6ejdnc21XKzNxWHNMa25HaEd3VkxQUT09
-[2024-10-17 21:33:33] Password mismatch for email: chamuditha1@gmail.com
-[2024-10-17 21:41:21] reCAPTCHA verification failed for email: chamuditha1@gmail.com
-[2024-10-17 21:41:38] User login attempt: chamuditha1@gmail.com
-[2024-10-17 21:41:38] Encrypted password from DB for email chamuditha1@gmail.com: iiEXSSILboHzM8etOT6hTDo6S2d1NklxLzNTdC8vQXFDeGR6Z3
-[2024-10-17 21:41:38] IV: Š!I"nó3Ç­9>¡L, Encrypted Password: Kgu6Iq/3St//AqCxdzg
-[2024-10-17 21:41:38] Decryption failed.
-[2024-10-17 21:53:32] User login attempt: chamuditha3@gmail.com
-[2024-10-17 21:53:32] Encrypted password from DB for email chamuditha3@gmail.com: np3GpmiN7vRMNP+6g5UOY56dxqZoje70TDT/uoOVDmM=
-[2024-10-17 21:55:55] reCAPTCHA verification failed for email: chamuditha3@gmail.com
-[2024-10-17 21:56:54] reCAPTCHA verification failed for email: chamuditha3@gmail.com
-[2024-10-17 21:57:26] reCAPTCHA verification failed for email: chamuditha3@gmail.com
-[2024-10-17 21:57:44] User login attempt: chamuditha3@gmail.com
-[2024-10-17 21:57:44] Encrypted password from DB for email chamuditha3@gmail.com: np3GpmiN7vRMNP+6g5UOY56dxqZoje70TDT/uoOVDmM=
-[2024-10-17 21:57:44] Decryption failed for password.
-[2024-10-17 21:58:14] reCAPTCHA verification failed for email: chamuditha3@gmail.com
-[2024-10-17 21:58:41] User login attempt: chamuditha3@gmail.com
-[2024-10-17 21:58:41] Encrypted password from DB for email chamuditha3@gmail.com: np3GpmiN7vRMNP+6g5UOY56dxqZoje70TDT/uoOVDmM=
-[2024-10-17 21:58:41] Decryption failed for password.
-[2024-10-17 22:00:29] reCAPTCHA verification failed for email: chamuditha3@gmail.com
-[2024-10-17 22:00:45] User login attempt: chamuditha3@gmail.com
-[2024-10-17 22:00:45] Encrypted password from DB for email chamuditha3@gmail.com: np3GpmiN7vRMNP+6g5UOY56dxqZoje70TDT/uoOVDmM=
-[2024-10-17 22:00:45] Decryption failed for password.
-[2024-10-17 22:04:05] reCAPTCHA verification failed for email: chamuditha3@gmail.com
-[2024-10-17 22:04:28] reCAPTCHA not completed for email: 
-[2024-10-17 22:07:59] User login attempt: chamuditha4@gmail.com
-[2024-10-17 22:07:59] Encrypted password from DB for email chamuditha4@gmail.com: bnAzR3BtaU43dlJNTlArNmc1VU9Zdz09
-[2024-10-17 22:07:59] Password mismatch for email: chamuditha4@gmail.com
-[2024-10-17 22:09:06] User login attempt: chamuditha4@gmail.com
-[2024-10-17 22:09:06] Encrypted password from DB for email chamuditha4@gmail.com: bnAzR3BtaU43dlJNTlArNmc1VU9Zdz09
-[2024-10-17 22:09:06] Decrypted password for email chamuditha4@gmail.com: 
-[2024-10-17 22:09:06] Password mismatch for email: chamuditha4@gmail.com
-[2024-10-17 22:11:29] User login attempt: chamuditha4@gmail.com
-[2024-10-17 22:11:29] Encrypted password from DB for email chamuditha4@gmail.com: bnAzR3BtaU43dlJNTlArNmc1VU9Zdz09
-[2024-10-17 22:11:29] Decrypted password for email chamuditha4@gmail.com: 
-[2024-10-17 22:11:29] Password mismatch for email: chamuditha4@gmail.com
-[2024-10-17 22:12:04] reCAPTCHA verification failed for email: chamuditha4@gmail.com
-[2024-10-17 22:12:26] User login attempt: chamuditha4@gmail.com
-[2024-10-17 22:12:26] Encrypted password from DB for email chamuditha4@gmail.com: bnAzR3BtaU43dlJNTlArNmc1VU9Zdz09
-[2024-10-17 22:12:26] Decrypted password for email chamuditha4@gmail.com: 
-[2024-10-17 22:12:26] Decryption failed for password.
+[2024-10-18 15:49:12] recaptcha verification successful
+[2024-10-18 15:49:12] login attempt for alex@gmail.com
+[2024-10-18 15:49:12] login successful for alex@gmail.com
+[2024-10-18 15:49:15] logout successful
+[2024-10-18 15:49:49] recaptcha verification successful
+[2024-10-18 15:49:49] login attempt for harry@gmail.com
+[2024-10-18 15:49:49] login successful for harry@gmail.com
+[2024-10-18 15:49:52] logout successful
+[2024-10-18 15:50:40] recaptcha verification successful
+[2024-10-18 15:50:40] login attempt for alex@gmail.com
+[2024-10-18 15:50:40] login failed for alex@gmail.com[2024-10-19 09:13:04] recaptcha verification successful
+[2024-10-19 09:13:04] login attempt for chamuditha05@gmail.com
+[2024-10-19 09:13:04] login successful for chamuditha05@gmail.com

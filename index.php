@@ -87,7 +87,7 @@ if (!isset($_SESSION['login_block_time'])) {
 }
 
 // Set the maximum login attempts and block duration
-$maxAttempts = 3;
+$maxAttempts = 2;
 $blockDuration = 300; // Block duration in seconds (5 minutes)
 
 if (isset($_POST['user_login_submit'])) {
@@ -122,6 +122,7 @@ if (isset($_POST['user_login_submit'])) {
                     icon: 'error',
                 });</script>";
             } else {
+                writelog("recaptcha verification successful");
                 // Proceed with login if reCAPTCHA verification was successful
                 $stmt = $conn->prepare("SELECT * FROM signup WHERE Email = ? AND Password = BINARY ?");
                 
@@ -133,9 +134,10 @@ if (isset($_POST['user_login_submit'])) {
                 
                 // Get the result
                 $result = $stmt->get_result();
-                
+                writelog("login attempt for $Email");
                 if ($result->num_rows > 0) {
                     // Successful login
+                    writelog("login successful for $Email");
                     $_SESSION['usermail'] = $Email;
                     $_SESSION['login_attempts'] = 0; // Reset the login attempts on successful login
                     $_SESSION['login_block_time'] = 0; // Clear any block time
@@ -155,6 +157,7 @@ if (isset($_POST['user_login_submit'])) {
                             title: 'Invalid email or password',
                             icon: 'error',
                         });</script>";
+                        writelog("login failed for $Email");
                     }
                 }
                 
@@ -166,6 +169,7 @@ if (isset($_POST['user_login_submit'])) {
                 title: 'Please complete the reCAPTCHA',
                 icon: 'error',
             });</script>";
+            
         }
     }
 }
@@ -276,7 +280,8 @@ if (isset($_POST['user_signup_submit'])) {
     // Regular expressions for validation
     $usernamePattern = "/^[a-zA-Z0-9]{3,}$/"; // Only letters and numbers, min 3 characters
     $emailPattern = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"; // Standard email pattern
-    $passwordPattern = "/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/";
+    $passwordPattern = "/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/"; //more than 8 characters, at least ,
+    //one letter and one number
 
     // reCAPTCHA verification
     $recaptchaSecret = '6Lec-icqAAAAAPSJuF7JScv6FC8MVybGowxB2w_h'; // Replace with your secret key
@@ -325,7 +330,7 @@ if (isset($_POST['user_signup_submit'])) {
                     });</script>";
                 } else {
                     // Check if Azure function is accessible before inserting
-                    if (triggerAzureFunction($Username, $Email)) {
+                    
                         // Hash the password before inserting it
                         $hashedPassword = password_hash($Password, PASSWORD_BCRYPT);
 
@@ -342,22 +347,14 @@ if (isset($_POST['user_signup_submit'])) {
                             $Password = "";
                             $CPassword = "";
 
-                            echo "<script>swal({
-                                title: 'Signup successful! Confirmation email sent.',
-                                icon: 'success',
-                            });</script>";
+                            writelog("signup successful for $Email");
                         } else {
                             echo "<script>swal({
                                 title: 'Something went wrong',
                                 icon: 'error',
                             });</script>";
                         }
-                    } else {
-                        echo "<script>swal({
-                            title: 'Error triggering confirmation email function',
-                            icon: 'error',
-                        });</script>";
-                    }
+                    
                 }
             } else {
                 echo "<script>swal({
@@ -369,32 +366,7 @@ if (isset($_POST['user_signup_submit'])) {
     }
 }
 
-// Function to send HTTP POST request to Azure Function
-function triggerAzureFunction($Username, $Email) {
-    $url = 'https://hmst.azurewebsites.net/api/emailconformation'; // Replace with your Azure Function URL
-    $data = array(
-        'name' => $Username,
-        'email' => $Email
-    );
 
-    $options = array(
-        'http' => array(
-            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method'  => 'POST',
-            'content' => http_build_query($data),
-        ),
-    );
-
-    $context  = stream_context_create($options);
-    $result = @file_get_contents($url, false, $context);
-
-    if ($result === FALSE) {
-        error_log('Error triggering Azure Function');
-        return false; // Return false if the API call fails
-    }
-    
-    return true; // Return true if the API call is successful
-}
 ?>
 
 
