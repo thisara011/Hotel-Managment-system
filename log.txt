@@ -17,3 +17,7 @@
 [2024-10-19 09:24:25] recaptcha verification successful
 [2024-10-19 09:24:25] login attempt for chamuditha05@gmail.com
 [2024-10-19 09:24:25] login successful for chamuditha05@gmail.com
+[2024-10-19 09:55:34] recaptcha verification successful
+[2024-10-19 09:55:34] login attempt for chamuditha05@gmail.com
+[2024-10-19 09:55:34] login successful for chamuditha05@gmail.com
+[2024-10-19 09:57:03] logout successful
