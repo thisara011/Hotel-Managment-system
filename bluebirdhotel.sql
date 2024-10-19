@@ -77,7 +77,7 @@ CREATE TABLE `payment` (
 --
 
 INSERT INTO `payment` (`id`, `Name`, `Email`, `RoomType`, `Bed`, `NoofRoom`, `cin`, `cout`, `noofdays`, `roomtotal`, `bedtotal`, `meal`, `mealtotal`, `finaltotal`) VALUES
-(41, 'Tushar pankhaniya', 'pankhaniyatushar9@gmail.com', 'Single Room', 'Single', 1, '2022-11-09', '2022-11-10', 1, 1000.00, 10.00, 'Room only', 0.00, 1010.00);
+(41, 'John', 'John@gmail.com', 'Single Room', 'Single', 1, '2022-11-09', '2022-11-10', 1, 1000.00, 10.00, 'Room only', 0.00, 1010.00);
 
 -- --------------------------------------------------------
 
@@ -141,7 +141,7 @@ CREATE TABLE `roombook` (
 --
 
 INSERT INTO `roombook` (`id`, `Name`, `Email`, `Country`, `Phone`, `RoomType`, `Bed`, `Meal`, `NoofRoom`, `cin`, `cout`, `nodays`, `stat`) VALUES
-(41, 'Tushar pankhaniya', 'pankhaniyatushar9@gmail.com', 'India', '9313346569', 'Single Room', 'Single', 'Room only', '1', '2022-11-09', '2022-11-10', 1, 'Confirm');
+(41, 'John', 'John@gmail.com', 'India', '9313346569', 'Single Room', 'Single', 'Room only', '1', '2022-11-09', '2022-11-10', 1, 'Confirm');
 
 -- --------------------------------------------------------
 
@@ -160,7 +160,7 @@ CREATE TABLE `signup` (
 -- Dumping data for table `signup`
 --
 INSERT INTO `signup` (`UserID`, `Username`, `Email`, `Password`) VALUES
-(1, 'Tushar Pankhaniya', 'tusharpankhaniya2202@gmail.com', '123');
+(1, 'John Doe', 'Johndoe@gmail.com', '123');
 
 -- --------------------------------------------------------
 
@@ -179,17 +179,9 @@ CREATE TABLE `staff` (
 --
 
 INSERT INTO `staff` (`id`, `name`, `work`) VALUES
-(1, 'Tushar pankhaniya', 'Manager'),
-(3, 'rohit patel', 'Cook'),
-(4, 'Dipak', 'Cook'),
-(5, 'tirth', 'Helper'),
-(6, 'mohan', 'Helper'),
-(7, 'shyam', 'cleaner'),
-(8, 'rohan', 'weighter'),
-(9, 'hiren', 'weighter'),
-(10, 'nikunj', 'weighter'),
-(11, 'rekha', 'Cook');
-
+(1, 'mohan', 'Helper'),
+(2, 'rohan', 'weighter'),
+(3, 'hiren', 'weighter'),
 --
 -- Indexes for dumped tables
 --

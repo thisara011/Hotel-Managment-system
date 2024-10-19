@@ -1,7 +1,7 @@
 <?php
 // Database connection parameters
 $host = 'localhost';
-$user = 'root'; //  database username
+$user = 'bluebird_user; //  database username
 $password = ''; //   database password
 $dbname = 'bluebirdhotel'; //  database name
 

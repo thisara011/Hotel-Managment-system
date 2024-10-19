@@ -21,3 +21,20 @@
 [2024-10-19 09:55:34] login attempt for chamuditha05@gmail.com
 [2024-10-19 09:55:34] login successful for chamuditha05@gmail.com
 [2024-10-19 09:57:03] logout successful
+[2024-10-19 11:08:45] logout successful
+[2024-10-19 11:56:16] recaptcha verification successful
+[2024-10-19 11:56:16] login attempt for chamuditha05@gmail.com
+[2024-10-19 11:56:16] login successful for chamuditha05@gmail.com
+[2024-10-19 11:56:58] logout successful
+[2024-10-19 11:58:14] recaptcha verification successful
+[2024-10-19 11:58:14] login attempt for chha
+[2024-10-19 11:58:14] login failed for chha
+[2024-10-19 17:13:48] logout successful
+[2024-10-19 17:14:49] recaptcha verification successful
+[2024-10-19 17:14:49] login attempt for chamuditha05@gmail.com
+[2024-10-19 17:14:49] login successful for chamuditha05@gmail.com
+[2024-10-19 17:15:12] logout successful
+[2024-10-19 23:52:19] recaptcha verification successful
+[2024-10-19 23:52:19] login attempt for chamuditha05@gmail.com
+[2024-10-19 23:52:19] login successful for chamuditha05@gmail.com
+[2024-10-19 23:52:50] logout successful
