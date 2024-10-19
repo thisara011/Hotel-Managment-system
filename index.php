@@ -268,7 +268,6 @@ if (isset($_POST['user_login_submit'])) {
             </div>
 
  <!--============ signup =============-->
- <!--============ signup =============-->
 <?php
 
 if (isset($_POST['user_signup_submit'])) {
@@ -276,21 +275,21 @@ if (isset($_POST['user_signup_submit'])) {
     $Email = $_POST['Email'];
     $Password = $_POST['Password'];
     $CPassword = $_POST['CPassword'];
-
+    
     // Regular expressions for validation
     $usernamePattern = "/^[a-zA-Z0-9]{3,}$/"; // Only letters and numbers, min 3 characters
     $emailPattern = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"; // Standard email pattern
-    $passwordPattern = "/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/"; //more than 8 characters, at least ,
+    $passwordPattern = "/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/";  //more than 8 characters, at least ,
     //one letter and one number
 
     // reCAPTCHA verification
     $recaptchaSecret = '6Lec-icqAAAAAPSJuF7JScv6FC8MVybGowxB2w_h'; // Replace with your secret key
     $recaptchaResponse = $_POST['g-recaptcha-response'];
     $remoteIp = $_SERVER['REMOTE_ADDR'];
-
+    
     $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse&remoteip=$remoteIp");
     $responseKeys = json_decode($response, true);
-
+    
     // Validate input fields
     if (intval($responseKeys["success"]) !== 1) {
         echo "<script>swal({
@@ -329,32 +328,42 @@ if (isset($_POST['user_signup_submit'])) {
                         icon: 'error',
                     });</script>";
                 } else {
-                    // Check if Azure function is accessible before inserting
+                    // Hash the password before inserting it
+                    $hashedPassword = password_hash($Password, PASSWORD_BCRYPT);
+
+                    // Insert the hashed password into the database
+                    $sql = "INSERT INTO signup (Username, Email, Password) VALUES ('$Username', '$Email', '$hashedPassword')";
+                    $result = mysqli_query($conn, $sql);
+
+                    if ($result) {
+                        $_SESSION['usermail'] = $Email;
+                        $Username = "";
+                        $Email = "";
+                        $Password = "";
+                        // Success message
+                        echo "<script>swal({
+                            title: 'Signup successful!',
+                            text: 'Your account has been created successfully.',
+                            icon: 'success',
+                        }).then(function() {
+                            window.location = 'logger.php'; // Redirect to login page after confirmation
+                        });</script>";
+                         echo "<script>swal({
+                            title: 'Signup successful!',
+                            text: 'Your account has been created successfully.',
+                            icon: 'success',
+                        }).then(function() {
+                            window.location = 'logger.php'; // Redirect to login page after confirmation
+                        });</script>";
+                        
+                    } 
                     
-                        // Hash the password before inserting it
-                        $hashedPassword = password_hash($Password, PASSWORD_BCRYPT);
-
-                        // Insert the hashed password into the database
-                        $sql = "INSERT INTO signup (Username, Email, Password) VALUES ('$Username', '$Email', '$hashedPassword')";
-                        $result = mysqli_query($conn, $sql);
-
-                        if ($result) {
-                            $_SESSION['usermail'] = $Email;
-
-                            // Reset form values
-                            $Username = "";
-                            $Email = "";
-                            $Password = "";
-                            $CPassword = "";
-
-                            writelog("signup successful for $Email");
-                        } else {
-                            echo "<script>swal({
-                                title: 'Something went wrong',
-                                icon: 'error',
-                            });</script>";
-                        }
-                    
+                    else {
+                        echo "<script>swal({
+                            title: 'Something went wrong',
+                            icon: 'error',
+                        });</script>";
+                    }
                 }
             } else {
                 echo "<script>swal({
@@ -365,10 +374,7 @@ if (isset($_POST['user_signup_submit'])) {
         }
     }
 }
-
-
 ?>
-
 
 
 
